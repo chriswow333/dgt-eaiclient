@@ -1,0 +1,26 @@
+# feign: 
+#   okhttp: 
+#     enabled: true
+#   hystrix: 
+#     enabled: true
+#   circuitbreaker: 
+#     enabled: true
+#   compression: 
+#     request: 
+#       enabled: true
+#       min-request-size: 2048
+#       request.mime-types: text/xml,application/xml,application/json
+#     response: 
+#       enabled: true
+#       useGzipDecoder: true
+
+#logging.level.project.user.UserClient: DEBUG
+
+hystrix: 
+  command: 
+    default: 
+      execution: 
+        timeout: 
+          enabled: true
+        isolation: 
+          strategy: SEMAPHORE
