@@ -12,13 +12,15 @@ public class DgtEaiClientProperty {
 
   private String host = "";
 
-  private String token = "";
+  private String tokenDefault = "";
 
-  private int connectTimeout = 60;
+  private String tokenRedisKey = "";
 
-  private int readTimeout = 60;
+  private int clientConnectTimeout = 60;
 
-  private int writeTimeout = 60;
+  private int clientReadTimeout = 60;
+
+  private int clientWriteTimeout = 60;
 
   private boolean retryOnConnectionFailure  = false;
 
