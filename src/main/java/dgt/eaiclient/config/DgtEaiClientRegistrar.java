@@ -99,15 +99,12 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 		// factoryBean.setContextId(contextId);
 		// log.info("hello contextId : {}", contextId );
 
-
 		BeanDefinitionBuilder definition = BeanDefinitionBuilder.genericBeanDefinition(clazz, () -> {
 
 			factoryBean.setUrl(getUrl(beanFactory, attributes));
 
-
 			factoryBean.setDecode404(false);
 			
-
 			// Object fallbackFactory = attributes.get("fallbackFactory");
 			// if (fallbackFactory != null) {
 			// 	factoryBean.setFallbackFactory(fallbackFactory instanceof Class ? (Class<?>) fallbackFactory
@@ -126,8 +123,6 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 		AbstractBeanDefinition beanDefinition = definition.getBeanDefinition();
 		beanDefinition.setAttribute(FactoryBean.OBJECT_TYPE_ATTRIBUTE, className);
 		beanDefinition.setAttribute("feignClientsRegistrarFactoryBean", factoryBean);
-
-
 
 		BeanDefinitionHolder holder = new BeanDefinitionHolder(beanDefinition, className, null);
 

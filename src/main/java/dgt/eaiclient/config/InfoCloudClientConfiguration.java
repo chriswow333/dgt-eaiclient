@@ -9,11 +9,9 @@ import javax.net.ssl.X509TrustManager;
 import org.springframework.cloud.openfeign.encoding.FeignClientEncodingProperties;
 import org.springframework.context.annotation.Bean;
 
-import dgt.eaiclient.encoder.DgtEaiClientEncoder;
 import dgt.eaiclient.interceptor.BasicInterceptor;
 import dgt.eaiclient.props.DgtEaiClientProperty;
 import feign.RequestInterceptor;
-import feign.codec.Encoder;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.ConnectionPool;
 
