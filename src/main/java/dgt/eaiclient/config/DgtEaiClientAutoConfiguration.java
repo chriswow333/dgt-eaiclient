@@ -6,18 +6,10 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.X509TrustManager;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
-import org.springframework.beans.factory.support.GenericBeanDefinition;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.openfeign.encoding.FeignClientEncodingProperties;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-import dgt.eaiclient.client.DgtEaiClient;
+import dgt.eaiclient.client.DgtEaiClientSample;
 import dgt.eaiclient.decoder.DgtEaiClientDecoder;
 import dgt.eaiclient.decoder.DgtEaiClientErrorDecoder;
 import dgt.eaiclient.encoder.DgtEaiClientEncoder;
@@ -35,13 +27,13 @@ import io.github.resilience4j.ratelimiter.RateLimiter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.ConnectionPool;
 
-@Configuration
-@EnableConfigurationProperties(value={DgtEaiClientProperty.class, FeignClientEncodingProperties.class})
+// @Configuration
+// @EnableConfigurationProperties(value={DgtEaiClientProperty.class, FeignClientEncodingProperties.class})
 // @EnableFeignClients
 @Slf4j
 public class DgtEaiClientAutoConfiguration {
 
-  @Bean
+  // @Bean
   public okhttp3.OkHttpClient okHttpClient(DgtEaiClientProperty property){
     log.info("[eai-client][init]:okHttpClient");
 
@@ -63,8 +55,8 @@ public class DgtEaiClientAutoConfiguration {
   }
 
 
-  @Bean(name="hello")
-  public DgtEaiClient dgtEaiClient(okhttp3.OkHttpClient client, FeignClientEncodingProperties properties, DgtEaiClientProperty property, TokenInterceptor tokenInterceptor) {
+  // @Bean
+  public DgtEaiClientSample dgtEaiClient(okhttp3.OkHttpClient client, FeignClientEncodingProperties properties, DgtEaiClientProperty property, TokenInterceptor tokenInterceptor) {
     log.info("[eai-client][init]:dgtEaiClient");
 
 
@@ -81,9 +73,10 @@ public class DgtEaiClientAutoConfiguration {
       .withCircuitBreaker(circuitBreaker)
       .withBulkhead(bulkhead)
       // .withRetry(retry)
-      .withFallback(DgtEaiClient.fallback, FeignException.class)
+      .withFallback(DgtEaiClientSample.fallback, FeignException.class)
       // .withFallback(circuitBreakerFallback, CircuitBreakerOpenException.class)
       .build();
+
 
     return Resilience4jFeign.builder(decorators)
       .client(new OkHttpClient(client))
@@ -94,33 +87,14 @@ public class DgtEaiClientAutoConfiguration {
       .encoder(new DgtEaiClientEncoder())
       .decoder(new DgtEaiClientDecoder())
       .errorDecoder(new DgtEaiClientErrorDecoder())
-      .target(DgtEaiClient.class,  property.getHost());
+      .target(DgtEaiClientSample.class,  "http://localhost:8080");
   }
 
 
-  @Bean
+  // @Bean
   public TokenInterceptor tokenInterceptor(DgtEaiClientProperty property){
     return new TokenInterceptor(property.getTokenDefault());
   }
 
-
-
-  private static class MyConfigBean implements BeanDefinitionRegistryPostProcessor {
-
-    @Override
-    public void postProcessBeanDefinitionRegistry (BeanDefinitionRegistry registry) throws BeansException {
-
-    GenericBeanDefinition bd = new GenericBeanDefinition();
-    bd.setBeanClass(DgtEaiClient.class);
-    bd.getPropertyValues().add("strProp", "my string property");
-    registry.registerBeanDefinition("myBeanName", bd);
-    }
-
-    @Override
-    public void postProcessBeanFactory (ConfigurableListableBeanFactory beanFactory)
-          throws BeansException {
-    //no op
-    }
-    }
 
 }

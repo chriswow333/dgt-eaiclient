@@ -1,8 +1,5 @@
 package dgt.eaiclient.interceptor;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import lombok.Getter;

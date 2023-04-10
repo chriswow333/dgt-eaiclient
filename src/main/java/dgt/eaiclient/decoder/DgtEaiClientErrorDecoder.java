@@ -14,8 +14,9 @@ public class DgtEaiClientErrorDecoder implements ErrorDecoder{
       case 404:
           // return new NotFoundException();
       default:
+          System.out.println("status : " + response.status());
           return new Exception("Generic error");
-  }
+    }
 
     // try {
 

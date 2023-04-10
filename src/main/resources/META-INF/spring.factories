@@ -1,2 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-dgt.eaiclient.config.DgtEaiClientAutoConfiguration\
+#org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+#dgt.eaiclient.config.DgtEaiClientAutoConfiguration\
