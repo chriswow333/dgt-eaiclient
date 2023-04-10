@@ -26,7 +26,6 @@ public class TokenInterceptor implements RequestInterceptor {
   public void updateToken(String token){
     log.info("[eai-client][token]: update {}", token);
     // No need to lock token variable.
-    // 
     this.token = token;
   }
 

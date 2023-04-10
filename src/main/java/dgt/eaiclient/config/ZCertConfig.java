@@ -13,9 +13,9 @@ import javax.net.ssl.X509TrustManager;
 import dgt.eaiclient.exception.DgtCertException;
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
-public class CertConfig {
+public class ZCertConfig {
   
-  private CertConfig(){}
+  private ZCertConfig(){}
 
 
   public static SSLSocketFactory buildSSLSocketFactory(X509TrustManager x509TrustManager){

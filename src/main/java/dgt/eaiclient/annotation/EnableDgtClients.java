@@ -1,4 +1,4 @@
-package dgt.eaiclient.zannotation;
+package dgt.eaiclient.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,11 +7,12 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
-import dgt.eaiclient.zconfig.DgtClientRegistrar;
+import dgt.eaiclient.config.DgtEaiClientRegistrar;
+
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Import(DgtClientRegistrar.class)
+@Import(DgtEaiClientRegistrar.class)
 public @interface EnableDgtClients {
 
 

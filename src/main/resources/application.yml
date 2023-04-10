@@ -1,0 +1,24 @@
+
+
+dgt: 
+  eaiclient: 
+    clientConnectTimeout: 60
+    clientReadTimeout: 60
+    clientWriteTimeout: 60
+    retryOnConnectionFailure: false
+    maxIdleConnections: 10
+    keepAliveDuration: 10
+    config: 
+      normal: 
+        bulkhead: 
+          maxConcurrenctCalls: 150
+          maxWaitDuration: 150
+        circuitBreaker:
+          slidingWindowType: COUNT_BASED
+          slidingWindowSize: 120
+          failureRateThreshold: 20.0
+          waitDurationInOpenState: 5
+        ratelimit: 
+          limitRefreshPeriods: 10
+          limitForPeriod: 10
+          timeoutDuration: 10

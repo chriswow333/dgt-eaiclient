@@ -9,18 +9,14 @@ import feign.RequestTemplate;
 public class BasicInterceptor extends FeignAcceptGzipEncodingInterceptor{
 
   public BasicInterceptor(FeignClientEncodingProperties properties) {
-
     super(properties);
   }
-  
 
   @Override
 	public void apply(RequestTemplate template) {
     
     // using gzip
     super.apply(template);
-
-
     template.header("Content-type", MediaType.APPLICATION_JSON_VALUE);
 	}
 }
