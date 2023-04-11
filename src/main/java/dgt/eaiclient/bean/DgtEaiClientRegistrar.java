@@ -1,4 +1,4 @@
-package dgt.eaiclient.config;
+package dgt.eaiclient.bean;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,11 +28,13 @@ import org.springframework.util.StringUtils;
 
 import dgt.eaiclient.annotation.DgtClient;
 import dgt.eaiclient.annotation.EnableDgtClients;
-import dgt.eaiclient.bean.DgtEaiClientFactoryBean;
-import dgt.eaiclient.exception.DgtEaiClientException;
-import lombok.extern.slf4j.Slf4j;
+import dgt.eaiclient.exception.DgtClientInitException;
 
-@Slf4j
+/**
+ * Dgt eai client Register 
+ * 
+ * @author KY 89142
+ */
 public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, EnvironmentAware {
 
 	private Environment environment;
@@ -42,7 +44,6 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
     registerDgtClients(metadata, registry);
 	}
 
-
   public void registerDgtClients(AnnotationMetadata metadata, BeanDefinitionRegistry registry){
 
     LinkedHashSet<BeanDefinition> candidateComponents = new LinkedHashSet<>();
@@ -50,7 +51,7 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 		final Class<?>[] clients = attrs == null ? null : (Class<?>[]) attrs.get("clients");
 
 		if (clients == null || clients.length == 0) {
-      throw new DgtEaiClientException("[dgt-eaiclient][init]: No dgt clients founded");
+      throw new DgtClientInitException("[dgt-eaiclient][init]: No dgt clients founded");
 		}
 
     for (Class<?> clazz : clients) {
@@ -68,9 +69,6 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 				Map<String, Object> attributes = annotationMetadata.getAnnotationAttributes(DgtClient.class.getCanonicalName());
 
 				String name = getClientName(attributes);
-				
-				log.info("hello {}", name);
-
 				registerClientConfiguration(registry, name, attributes.get("clientConfiguration"));
 				registerDgtClient(registry, name, annotationMetadata, attributes);
 
@@ -78,7 +76,19 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 		}
   }
 
-	@SuppressWarnings("unchecked")
+
+	private void registerClientConfiguration(BeanDefinitionRegistry registry, Object name, Object configuration) {
+
+		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(FeignClientSpecification.class);
+		builder.addConstructorArgValue(name);
+		builder.addConstructorArgValue(configuration);
+		
+		String beanDefinitionName = name + "." + FeignClientSpecification.class.getSimpleName();
+		registry.registerBeanDefinition(beanDefinitionName, builder.getBeanDefinition());
+
+	}
+
+	@SuppressWarnings("Unchecked")
 	private void registerDgtClient(BeanDefinitionRegistry registry, String name, AnnotationMetadata annotationMetadata, Map<String, Object> attributes){
 		
 		String className = annotationMetadata.getClassName();
@@ -94,13 +104,8 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 		factoryBean.setType(clazz);
 		factoryBean.setName(name);
 
-		// String contextId = getContextId(beanFactory, attributes);
-
-		// factoryBean.setContextId(contextId);
-		// log.info("hello contextId : {}", contextId );
 
 		BeanDefinitionBuilder definition = BeanDefinitionBuilder.genericBeanDefinition(clazz, () -> {
-
 			factoryBean.setUrl(getUrl(beanFactory, attributes));
 
 			factoryBean.setDecode404(false);
@@ -110,15 +115,13 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 			// 	factoryBean.setFallbackFactory(fallbackFactory instanceof Class ? (Class<?>) fallbackFactory
 			// 			: ClassUtils.resolveClassName(fallbackFactory.toString(), null));
 			// }
-
+	
 			return factoryBean.getObject();
-
+		
 		});
-
 
 		definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
 		definition.setLazyInit(true);
-
 
 		AbstractBeanDefinition beanDefinition = definition.getBeanDefinition();
 		beanDefinition.setAttribute(FactoryBean.OBJECT_TYPE_ATTRIBUTE, className);
@@ -130,15 +133,6 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 	}
 
 
-  private void registerClientConfiguration(BeanDefinitionRegistry registry, Object name, Object configuration) {
-		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(FeignClientSpecification.class);
-		builder.addConstructorArgValue(name);
-		builder.addConstructorArgValue(configuration);
-		String beanDefinitionName = name + "." + FeignClientSpecification.class.getSimpleName();
-		registry.registerBeanDefinition(beanDefinitionName, builder.getBeanDefinition());
-	}
-
-
   private String getClientName(Map<String, Object> client) {
 
 		if(client != null){
@@ -147,10 +141,8 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 				return value;
 			}
 		}
-		throw new DgtEaiClientException("'name' must be provided in @" + DgtClient.class.getSimpleName());
+		throw new DgtClientInitException("'name' must be provided in @" + DgtClient.class.getSimpleName());
 	}
-
-
 
 	private String getUrl(ConfigurableBeanFactory beanFactory, Map<String, Object> attributes) {
 		String url = resolve(beanFactory, (String) attributes.get("url"));
@@ -158,16 +150,20 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 		return url;
 	}
 
-	
-
 	private void validateUrl(String url) {
 		try {
 			new URL(url);
 		}catch(MalformedURLException e){
-			throw new DgtEaiClientException( url + "is malformed");
+			throw new DgtClientInitException( url + "is malformed");
 		}
 
 	}
+
+
+  @Override
+  public void setEnvironment(Environment environment) {
+    this.environment = environment;
+  }
 
 
 	private String resolve(ConfigurableBeanFactory beanFactory, String value) {
@@ -189,8 +185,4 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 		return value;
 	}
 
-  @Override
-  public void setEnvironment(Environment environment) {
-    this.environment = environment;
-  }
 }

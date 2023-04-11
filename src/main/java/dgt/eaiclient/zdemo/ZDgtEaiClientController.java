@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import dgt.eaiclient.client.InfoCloudNormalClient;
+import dgt.eaiclient.client.InfoCloudDefaultClient;
 import dgt.eaiclient.dto.base.BaseRqDto;
 import dgt.eaiclient.dto.base.BaseRsDto;
 import dgt.eaiclient.dto.request.DemoRqDto;
@@ -19,7 +19,7 @@ public class ZDgtEaiClientController {
 
   
   @Autowired
-  private InfoCloudNormalClient dgtEaiClient;
+  private InfoCloudDefaultClient dgtEaiClient;
 
 
   // @Autowired

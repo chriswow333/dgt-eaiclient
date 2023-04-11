@@ -5,19 +5,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import dgt.eaiclient.annotation.DgtClient;
-import dgt.eaiclient.config.InfoCloudClientConfiguration;
+import dgt.eaiclient.config.MidCloudClientConfiguration;
 import dgt.eaiclient.dto.base.BaseRqDto;
 import dgt.eaiclient.dto.base.BaseRsDto;
 import dgt.eaiclient.type.R4JType;
 
+
+
+/**
+ * 中台雲(升級雲) Client
+ */
 @DgtClient(
-  name = "infoCloudNormal",
-  url="http://localhost:8080", 
-  clientConfiguration = InfoCloudClientConfiguration.class,
-  r4jType = R4JType.NORMAL
+  name = "midCloudDefault",
+  url="${dgt.eaiclient.midCloud.url}", 
+  clientConfiguration = MidCloudClientConfiguration.class,
+  r4jType = R4JType.DEFAULT
 )
-public interface InfoCloudNormalClient {
-  
-  @RequestMapping(value = "/api/v1/mock", method = RequestMethod.POST, produces="application/json")
+public interface MidCloudDefaultClient {
+  @RequestMapping(value = "", method = RequestMethod.POST, produces="application/json")
   public BaseRsDto telegram(@RequestBody BaseRqDto baseRqDto);
 }

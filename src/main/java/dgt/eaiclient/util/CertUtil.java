@@ -1,4 +1,4 @@
-package dgt.eaiclient.config;
+package dgt.eaiclient.util;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -12,14 +12,15 @@ import javax.net.ssl.X509TrustManager;
 
 import dgt.eaiclient.exception.DgtCertException;
 import lombok.extern.slf4j.Slf4j;
+
+
 @Slf4j
-public class ZCertConfig {
+public class CertUtil {
   
-  private ZCertConfig(){}
+  private CertUtil(){}
 
 
   public static SSLSocketFactory buildSSLSocketFactory(X509TrustManager x509TrustManager){
-
 
     // KeyStore keyStore = KeyStore.getInstance("JKS");
     // keyStore.load(new FileInputStream("keystore.jks"), "password".toCharArray());
@@ -39,7 +40,6 @@ public class ZCertConfig {
 
   }
 
-
   public static X509TrustManager getX509TrustManager(){
 
     return new X509TrustManager() {
@@ -54,11 +54,9 @@ public class ZCertConfig {
     };
   }
 
-
   public static HostnameVerifier getHostnameVerifier(){
     return (hostname, session)->{
       return true;
     };
-
   }
 }

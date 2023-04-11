@@ -7,10 +7,25 @@ import lombok.Setter;
 @Getter
 public class R4JRatelimitProperty {
   
-  private int limitRefreshPeriods = 10;
 
-  private int limitForPeriod = 10;
+  /**
+   * The period of a limit refresh. 
+   * After each period the rate limiter sets its permissions count back to the limitForPeriod value
+   * 500 [ns]
+   */
+  private int limitRefreshPeriods = 500;
 
-  private int timeoutDuration = 10;
+
+  /**
+   * The number of permissions available during one limit refresh period
+   */
+  private int limitForPeriod = 50;
+
+
+  /**
+   * The default wait time a thread waits for a permission
+   * 5 [s]	
+   */
+  private int timeoutDuration = 5;
   
 }

@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
-import dgt.eaiclient.config.DgtEaiClientRegistrar;
+import dgt.eaiclient.bean.DgtEaiClientRegistrar;
 
 
 @Retention(RetentionPolicy.RUNTIME)

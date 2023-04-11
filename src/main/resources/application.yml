@@ -6,10 +6,10 @@ dgt:
     clientReadTimeout: 60
     clientWriteTimeout: 60
     retryOnConnectionFailure: false
-    maxIdleConnections: 10
-    keepAliveDuration: 10
+    maxIdleConnections: 5
+    keepAliveDuration: 50
     config: 
-      normal: 
+      robust: 
         bulkhead: 
           maxConcurrenctCalls: 150
           maxWaitDuration: 150

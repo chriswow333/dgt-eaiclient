@@ -18,11 +18,12 @@ import dgt.eaiclient.util.CertUtil;
 import feign.RequestInterceptor;
 import okhttp3.ConnectionPool;
 
+
 /**
- * 資訊雲Client設定檔
+ * 中台雲(升級雲)Client設定檔
  */
-@EnableConfigurationProperties(value={DgtEaiClientProperty.class, FeignClientEncodingProperties.class})
-public class InfoCloudClientConfiguration {
+@EnableConfigurationProperties(value={DgtEaiClientProperty.class})
+public class MidCloudClientConfiguration {
   
   @Bean
   public okhttp3.OkHttpClient okHttpClient(DgtEaiClientProperty property){
@@ -48,12 +49,11 @@ public class InfoCloudClientConfiguration {
     return new BasicInterceptor(properties);
   }
 
-
-  @Bean("infoCloudToken")
-  public TokenInterceptor infoCloudTokenInterceptor(
-    @Value("${dgt.eaiclient.infoCloud.token}") String infoCloudToken
+  @Bean("midCloudToken")
+  public TokenInterceptor midCloudTokenInterceptor(
+    @Value("${dgt.eaiclient.midCloud.token}") String midCloudToken
   ){
-    return new TokenInterceptor(infoCloudToken);
+    return new TokenInterceptor(midCloudToken);
   }
 
 }

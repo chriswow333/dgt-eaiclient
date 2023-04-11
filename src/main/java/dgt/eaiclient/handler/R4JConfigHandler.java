@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import dgt.eaiclient.exception.DgtCircuitBreakerException;
 import dgt.eaiclient.props.DgtEaiClientProperty;
 import dgt.eaiclient.props.DgtEaiClientR4JProperty;
 import dgt.eaiclient.props.R4JBulkheadProperty;
@@ -17,16 +16,19 @@ import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.ratelimiter.RateLimiterConfig;
 import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 
+/**
+ * 
+ * R4J config Handler
+ * 
+ * @author KY 89142
+ */
 public class R4JConfigHandler {
   
   private R4JConfigHandler(){}
 
-
   public static void circuitBreaker(CircuitBreakerRegistry.Builder circuitBreakerRegistryBuilder, DgtEaiClientProperty dgtEaiClientProperty){
-
     Map<String, DgtEaiClientR4JProperty> dgtEaiClientR4JPropertyMap = dgtEaiClientProperty.getConfig();
     
-
     for(Entry<String, DgtEaiClientR4JProperty> entry : dgtEaiClientR4JPropertyMap.entrySet()){
       
       R4JCircuitBreakerProperty circuitBreakerProperty = entry.getValue().getCircuitBreaker();
@@ -42,16 +44,21 @@ public class R4JConfigHandler {
           break;
         default:
           type = CircuitBreakerConfig.SlidingWindowType.COUNT_BASED;
-
       }
 
       CircuitBreakerConfig cbConfig = CircuitBreakerConfig.custom()
+      .failureRateThreshold(circuitBreakerProperty.getFailureRateThreshold())
+      .slowCallRateThreshold(circuitBreakerProperty.getSlowCallRateThreshold())
+      .slowCallDurationThreshold(Duration.ofMillis(circuitBreakerProperty.getSlowCallDurationThreshold()))
+      .permittedNumberOfCallsInHalfOpenState(circuitBreakerProperty.getPermittedNumberOfCallsInHalfOpenState())
+      .maxWaitDurationInHalfOpenState(Duration.ofMillis(circuitBreakerProperty.getMaxWaitDurationInHalfOpenState()))
       .slidingWindowType(type)
       .slidingWindowSize(circuitBreakerProperty.getSlidingWindowSize())
-      .failureRateThreshold(circuitBreakerProperty.getFailureRateThreshold())
-      .waitDurationInOpenState(Duration.ofSeconds(circuitBreakerProperty.getWaitDurationInOpenState()))
-      .permittedNumberOfCallsInHalfOpenState(5)
-      .recordExceptions(DgtCircuitBreakerException.class)
+      .minimumNumberOfCalls(circuitBreakerProperty.getMinimumNumberOfCalls())
+      .waitDurationInOpenState(Duration.ofMillis(circuitBreakerProperty.getWaitDurationInOpenState()))
+      .automaticTransitionFromOpenToHalfOpenEnabled(circuitBreakerProperty.isAutomaticTransitionFromOpenToHalfOpenEnabled())
+      // .recordExceptions(circuitBreakerProperty.getRecordExceptions())
+      // .ignoreExceptions(circuitBreakerProperty.getIgnoreExceptions())
       .build();
 
       circuitBreakerRegistryBuilder.addCircuitBreakerConfig(entry.getKey(), cbConfig);
@@ -60,26 +67,22 @@ public class R4JConfigHandler {
   }
 
 
-
   public static void bulkhead(BulkheadRegistry.Builder bulkheadRegistryBuilder, DgtEaiClientProperty dgtEaiClientProperty){
     Map<String, DgtEaiClientR4JProperty> dgtEaiClientR4JPropertyMap = dgtEaiClientProperty.getConfig();
 
-    for(String key:dgtEaiClientR4JPropertyMap.keySet()){
+    for(Entry<String, DgtEaiClientR4JProperty> entry : dgtEaiClientR4JPropertyMap.entrySet()){
 
-      DgtEaiClientR4JProperty dgtEaiClientR4JProperty = dgtEaiClientR4JPropertyMap.get(key);
+      DgtEaiClientR4JProperty dgtEaiClientR4JProperty = entry.getValue();
 
       R4JBulkheadProperty bulkheadProperty = dgtEaiClientR4JProperty.getBulkhead();
 
-      bulkheadProperty.getClass();
-      
-
       // Create a custom configuration for a Bulkhead
       BulkheadConfig bulkConfig = BulkheadConfig.custom()
-      .maxConcurrentCalls(0)
-      .maxWaitDuration(Duration.ofMillis(500))
+      .maxConcurrentCalls(bulkheadProperty.getMaxConcurrenctCalls())
+      .maxWaitDuration(Duration.ofMillis(bulkheadProperty.getMaxWaitDuration()))
       .build();
 
-      bulkheadRegistryBuilder.addBulkheadConfig(key, bulkConfig);
+      bulkheadRegistryBuilder.addBulkheadConfig(entry.getKey(), bulkConfig);
     }
   }
 
@@ -87,19 +90,19 @@ public class R4JConfigHandler {
   public static void rateLimiter(RateLimiterRegistry.Builder rateLimiterRegistryBuilder, DgtEaiClientProperty dgtEaiClientProperty){
     Map<String, DgtEaiClientR4JProperty> dgtEaiClientR4JPropertyMap = dgtEaiClientProperty.getConfig();
 
-    for(String key:dgtEaiClientR4JPropertyMap.keySet()){
-    
-      DgtEaiClientR4JProperty dgtEaiClientR4JProperty = dgtEaiClientR4JPropertyMap.get(key);
+    for(Entry<String, DgtEaiClientR4JProperty> entry : dgtEaiClientR4JPropertyMap.entrySet()){
+      
+      DgtEaiClientR4JProperty dgtEaiClientR4JProperty = entry.getValue();
 
       R4JRatelimitProperty ratelimitProperty = dgtEaiClientR4JProperty.getRatelimit();
     
       RateLimiterConfig rlconfig = RateLimiterConfig.custom()
-      .limitRefreshPeriod(Duration.ofMillis(ratelimitProperty.getLimitRefreshPeriods()))
+      .timeoutDuration(Duration.ofSeconds(ratelimitProperty.getTimeoutDuration()))
+      .limitRefreshPeriod(Duration.ofNanos(ratelimitProperty.getLimitRefreshPeriods()))
       .limitForPeriod(ratelimitProperty.getLimitForPeriod())
-      .timeoutDuration(Duration.ofMillis(ratelimitProperty.getTimeoutDuration()))
       .build();
 
-      rateLimiterRegistryBuilder.addRateLimiterConfig(key, rlconfig);
+      rateLimiterRegistryBuilder.addRateLimiterConfig(entry.getKey(), rlconfig);
 
     }
   }

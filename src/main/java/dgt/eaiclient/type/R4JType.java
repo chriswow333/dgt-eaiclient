@@ -1,12 +1,10 @@
 package dgt.eaiclient.type;
 
-public class R4JType {
+public interface R4JType {
     
   public static final String ROBUST = "robust";
 
-  public static final String NORMAL = "normal";
-
-  public static final String FRAGILE = "fragile";
+  public static final String DEFAULT = "default";
 
   public static final String FREE = "free";
 
