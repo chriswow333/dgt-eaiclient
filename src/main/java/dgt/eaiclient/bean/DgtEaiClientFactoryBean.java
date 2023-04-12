@@ -1,5 +1,9 @@
 package dgt.eaiclient.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.cloud.openfeign.FeignClientFactoryBean;
@@ -7,7 +11,9 @@ import org.springframework.cloud.openfeign.FeignContext;
 import org.springframework.cloud.openfeign.Targeter;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+import dgt.eaiclient.exception.DgtClientInitException;
 import dgt.eaiclient.type.R4JType;
 import feign.Feign;
 import feign.RequestInterceptor;
@@ -23,6 +29,7 @@ import io.github.resilience4j.feign.FeignDecorators;
 import io.github.resilience4j.feign.Resilience4jFeign;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -30,6 +37,7 @@ import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
  * 
  * @author KY 89142
  */
+@Slf4j
 public class DgtEaiClientFactoryBean extends FeignClientFactoryBean{
 
   private String name;
@@ -64,14 +72,21 @@ public class DgtEaiClientFactoryBean extends FeignClientFactoryBean{
 
   @Override
   protected Feign.Builder feign(FeignContext context) {
+    log.info("[dgt-client][init]:contextId: {}", name);
 
     FeignDecorators decorators = getFeignDecorator(context);
+
+    Encoder encoder = get(context, Encoder.class);
+    log.info("[dgt-client][init]:feign encoder : {}", encoder.getClass().getName());
+
+    Decoder decoder = get(context, Decoder.class);
+    log.info("[dgt-client][init]:feign decoder : {}", encoder.getClass().getName());
 
     Feign.Builder builder = Resilience4jFeign
     .builder(decorators)
     .contract(new SpringMvcContract())
-    .encoder(get(context, Encoder.class))
-    .decoder(get(context, Decoder.class));
+    .encoder(encoder)
+    .decoder(decoder);
     
 		configureFeign(context, builder);
 
@@ -80,10 +95,33 @@ public class DgtEaiClientFactoryBean extends FeignClientFactoryBean{
 
   @Override
 	protected void configureFeign(FeignContext context, Feign.Builder builder) {
-    configureUsingConfiguration(context, builder);
+
+    configureClient(context, builder);
+    configureInterceptors(context, builder);
+
+  }
+
+  private void configureClient(FeignContext context, Feign.Builder builder){
+    okhttp3.OkHttpClient client = getInheritedAwareOptional(context, okhttp3.OkHttpClient.class);
+    if(client == null) {
+      throw new DgtClientInitException("Not found client bean");
+    }
+    builder.client(new OkHttpClient(client));
+  }
+
+  private void configureInterceptors(FeignContext context, Feign.Builder builder){
+    
+    Map<String, RequestInterceptor> requestInterceptors = getInheritedAwareInstances(context, RequestInterceptor.class);
+    log.info("[dgt-client][init]:interceptors: {}", requestInterceptors.keySet());
+    if (requestInterceptors != null) {
+			List<RequestInterceptor> interceptors = new ArrayList<>(requestInterceptors.values());
+			AnnotationAwareOrderComparator.sort(interceptors);
+			builder.requestInterceptors(interceptors);
+		}
   }
 
   private FeignDecorators getFeignDecorator(FeignContext context){
+    log.info("[dgt-client][init]:r4jType : {}", r4jType);
 
     FeignDecorators.Builder decoratorBuilder = FeignDecorators.builder();
 
@@ -103,17 +141,6 @@ public class DgtEaiClientFactoryBean extends FeignClientFactoryBean{
 
   }
 
-
-  @Override
-	protected void configureUsingConfiguration(FeignContext context, Feign.Builder builder) {
-    
-    okhttp3.OkHttpClient client = getInheritedAwareOptional(context, okhttp3.OkHttpClient.class);
-    builder.client(new OkHttpClient(client));
-
-    RequestInterceptor requestInterceptor = getInheritedAwareOptional(context, RequestInterceptor.class);
-    builder.requestInterceptor(requestInterceptor);
-
-  }
 
 
   @Override

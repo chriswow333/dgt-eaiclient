@@ -11,21 +11,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TokenInterceptor implements RequestInterceptor {
 
-  private volatile String token = "";
+  private String tokenKey = "";
+  private String token = "";
 
-  public TokenInterceptor(String token) {
-    log.info("[eai-client][token]: init {}", token);
+  public TokenInterceptor(String tokenKey, String token) {
+
+    this.tokenKey = tokenKey;
     this.token = token;
   }
 
   @Override
   public void apply(RequestTemplate template) {
-    template.header("TOKEN", token);
+    template.header(tokenKey, token);
   } 
   
   public void updateToken(String token){
     log.info("[eai-client][token]: update {}", token);
-    // No need to lock token variable.
     this.token = token;
   }
 

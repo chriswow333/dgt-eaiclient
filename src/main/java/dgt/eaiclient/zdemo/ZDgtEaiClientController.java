@@ -1,6 +1,7 @@
 package dgt.eaiclient.zdemo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,8 +34,6 @@ public class ZDgtEaiClientController {
     dgtEaiClient.telegram(baseRqDto);
     // dgtEaiClient2.telegram(baseRqDto);
   }
-
-
 
   @PostMapping(value="/api/v1/mock")
   public BaseRsDto<DemoRsDto> helloDemoMock(@RequestBody BaseRqDto<DemoRqDto> request) {
