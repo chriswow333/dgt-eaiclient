@@ -18,10 +18,10 @@ import dgt.eaiclient.type.R4JType;
 @DgtClient(
   name = "midCloudDefault",
   url="${dgt.eaiclient.midCloud.url}", 
-  clientConfiguration = MidCloudClientConfiguration.class,
+  configuration = MidCloudClientConfiguration.class,
   r4jType = R4JType.DEFAULT
 )
-public interface MidCloudDefaultClient {
+public interface MidCloudDefaultClient{
   @RequestMapping(value = "", method = RequestMethod.POST, produces="application/json")
   public BaseRsDto telegram(@RequestBody BaseRqDto baseRqDto);
 }

@@ -32,7 +32,7 @@ public class CertUtil {
       sslContext = SSLContext.getInstance("TLS");
       sslContext.init(null, new TrustManager[] { x509TrustManager }, new java.security.SecureRandom());
       return sslContext.getSocketFactory();
-    } catch (NoSuchAlgorithmException |KeyManagementException e) {
+    } catch (NoSuchAlgorithmException | KeyManagementException e) {
       log.error("[dgt-eaiclient][init]:{}",e);
 
       throw new DgtCertException("build ssl socket factorty failed");

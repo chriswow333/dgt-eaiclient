@@ -1,8 +1,10 @@
 package dgt.eaiclient.handler;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeoutException;
 
 import dgt.eaiclient.props.DgtEaiClientProperty;
 import dgt.eaiclient.props.DgtEaiClientR4JProperty;
@@ -57,13 +59,13 @@ public class R4JConfigHandler {
       .minimumNumberOfCalls(circuitBreakerProperty.getMinimumNumberOfCalls())
       .waitDurationInOpenState(Duration.ofMillis(circuitBreakerProperty.getWaitDurationInOpenState()))
       .automaticTransitionFromOpenToHalfOpenEnabled(circuitBreakerProperty.isAutomaticTransitionFromOpenToHalfOpenEnabled())
-      // .recordExceptions(circuitBreakerProperty.getRecordExceptions())
+      .writableStackTraceEnabled(false)
+      .recordExceptions(IOException.class, TimeoutException.class)
       // .ignoreExceptions(circuitBreakerProperty.getIgnoreExceptions())
       .build();
 
       circuitBreakerRegistryBuilder.addCircuitBreakerConfig(entry.getKey(), cbConfig);
     }
-
   }
 
 
@@ -100,6 +102,7 @@ public class R4JConfigHandler {
       .timeoutDuration(Duration.ofSeconds(ratelimitProperty.getTimeoutDuration()))
       .limitRefreshPeriod(Duration.ofNanos(ratelimitProperty.getLimitRefreshPeriods()))
       .limitForPeriod(ratelimitProperty.getLimitForPeriod())
+      .writableStackTraceEnabled(false)
       .build();
 
       rateLimiterRegistryBuilder.addRateLimiterConfig(entry.getKey(), rlconfig);

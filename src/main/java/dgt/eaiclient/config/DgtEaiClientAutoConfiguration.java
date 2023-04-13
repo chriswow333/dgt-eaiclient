@@ -79,6 +79,11 @@ public class DgtEaiClientAutoConfiguration {
     return new DgtEaiClientDecoder();
   }
 
+  // @Bean
+  // public ErrorDecoder errorDecoder(){
+  //   return new DgtEaiClientErrorDecoder();
+  // }
+
   @Bean
   @Order(10)
   public RequestInterceptor requestInterceptor() {

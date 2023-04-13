@@ -1,5 +1,7 @@
 package dgt.eaiclient.config;
 
+import java.util.function.Function;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -7,10 +9,9 @@ import org.springframework.cloud.openfeign.encoding.FeignClientEncodingPropertie
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 
+import dgt.eaiclient.fallbackfactory.InfoCloudDefaultClientFallbackFactory;
 import dgt.eaiclient.interceptor.TokenInterceptor;
 import dgt.eaiclient.props.DgtEaiClientProperty;
-import feign.Request;
-import feign.RequestInterceptor;
 
 /**
  * 資訊雲Client設定檔
@@ -26,6 +27,11 @@ public class InfoCloudClientConfiguration {
     @Value("${dgt.eaiclient.infoCloud.token.value}") String infoCloudToken
   ){
     return new TokenInterceptor(infoCloudTokenKey, infoCloudToken);
+  }
+  
+  @Bean
+  public Function<Exception,InfoCloudDefaultClientFallbackFactory> factory(){
+    return InfoCloudDefaultClientFallbackFactory::new;
   }
 
 }

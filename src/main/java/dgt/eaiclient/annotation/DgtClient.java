@@ -4,17 +4,20 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.function.Function;
+
+import dgt.eaiclient.type.R4JType;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface DgtClient {
 
-	String name() default "";
+	String name();
 
-	String url() default "";
+	String url();
 
-	Class<?>[] clientConfiguration() default {};
+	Class<?>[] configuration() default {};
 
-	String r4jType() default "";
+	String r4jType() default R4JType.DEFAULT;
 
 }

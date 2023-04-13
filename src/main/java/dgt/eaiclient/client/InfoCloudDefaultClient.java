@@ -17,10 +17,10 @@ import dgt.eaiclient.type.R4JType;
 @DgtClient(
   name = "infoCloudDefault",
   url="${dgt.eaiclient.infoCloud.url}", 
-  clientConfiguration = InfoCloudClientConfiguration.class,
+  configuration = InfoCloudClientConfiguration.class,
   r4jType = R4JType.DEFAULT
 )
-public interface InfoCloudDefaultClient {
+public interface InfoCloudDefaultClient{
   @RequestMapping(value = "/api/v1/mock", method = RequestMethod.POST, produces="application/json")
   public BaseRsDto telegram(@RequestBody BaseRqDto baseRqDto);
 }

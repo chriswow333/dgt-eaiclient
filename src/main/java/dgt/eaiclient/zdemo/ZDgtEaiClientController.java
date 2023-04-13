@@ -35,7 +35,7 @@ public class ZDgtEaiClientController {
     // dgtEaiClient2.telegram(baseRqDto);
   }
 
-  @PostMapping(value="/api/v1/mock")
+  @PostMapping(value="/api/v1/mockq")
   public BaseRsDto<DemoRsDto> helloDemoMock(@RequestBody BaseRqDto<DemoRqDto> request) {
 
     log.info("im in api v1 mock");

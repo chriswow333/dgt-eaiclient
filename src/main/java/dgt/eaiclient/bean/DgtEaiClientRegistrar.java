@@ -28,7 +28,7 @@ import org.springframework.util.StringUtils;
 
 import dgt.eaiclient.annotation.DgtClient;
 import dgt.eaiclient.annotation.EnableDgtClients;
-import dgt.eaiclient.exception.DgtClientInitException;
+import dgt.eaiclient.exception.DgtEaiClientException;
 
 /**
  * Dgt eai client Register 
@@ -51,7 +51,7 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 		final Class<?>[] clients = attrs == null ? null : (Class<?>[]) attrs.get("clients");
 
 		if (clients == null || clients.length == 0) {
-      throw new DgtClientInitException("[dgt-client][init]: No dgt clients founded");
+      throw new DgtEaiClientException("[dgt-eaiclient][init]: No dgt clients founded");
 		}
 
     for (Class<?> clazz : clients) {
@@ -69,7 +69,7 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 				Map<String, Object> attributes = annotationMetadata.getAnnotationAttributes(DgtClient.class.getCanonicalName());
 
 				String name = getClientName(attributes);
-				registerClientConfiguration(registry, name, attributes.get("clientConfiguration"));
+				registerClientConfiguration(registry, name, attributes.get("configuration"));
 				registerDgtClient(registry, name, annotationMetadata, attributes);
 
 			}
@@ -88,7 +88,6 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 
 	}
 
-	@SuppressWarnings("Unchecked")
 	private void registerDgtClient(BeanDefinitionRegistry registry, String name, AnnotationMetadata annotationMetadata, Map<String, Object> attributes){
 		
 		String className = annotationMetadata.getClassName();
@@ -104,19 +103,10 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 		factoryBean.setType(clazz);
 		factoryBean.setName(name);
 
-
 		BeanDefinitionBuilder definition = BeanDefinitionBuilder.genericBeanDefinition(clazz, () -> {
 			factoryBean.setUrl(getUrl(beanFactory, attributes));
 			factoryBean.setDecode404(false);
-			
-			// Object fallbackFactory = attributes.get("fallbackFactory");
-			// if (fallbackFactory != null) {
-			// 	factoryBean.setFallbackFactory(fallbackFactory instanceof Class ? (Class<?>) fallbackFactory
-			// 			: ClassUtils.resolveClassName(fallbackFactory.toString(), null));
-			// }
-	
 			return factoryBean.getObject();
-		
 		});
 
 		definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
@@ -129,6 +119,7 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 		BeanDefinitionHolder holder = new BeanDefinitionHolder(beanDefinition, className, null);
 
 		BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);
+
 	}
 
   private String getClientName(Map<String, Object> client) {
@@ -138,7 +129,7 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 				return value;
 			}
 		}
-		throw new DgtClientInitException("[dgt-client][init]: 'name' must be provided in @" + DgtClient.class.getSimpleName());
+		throw new DgtEaiClientException("[dgt-eaiclient][init]: 'name' must be provided in @" + DgtClient.class.getSimpleName());
 	}
 
 	private String getUrl(ConfigurableBeanFactory beanFactory, Map<String, Object> attributes) {
@@ -151,7 +142,7 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 		try {
 			new URL(url);
 		}catch(MalformedURLException e){
-			throw new DgtClientInitException(url + "is malformed");
+			throw new DgtEaiClientException(url + "is malformed");
 		}
 	}
 
