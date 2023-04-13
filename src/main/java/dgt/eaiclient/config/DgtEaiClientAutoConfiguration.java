@@ -11,12 +11,14 @@ import dgt.eaiclient.annotation.EnableDgtClients;
 import dgt.eaiclient.client.InfoCloudDefaultClient;
 import dgt.eaiclient.client.MidCloudDefaultClient;
 import dgt.eaiclient.decoder.DgtEaiClientDecoder;
+import dgt.eaiclient.decoder.DgtEaiClientErrorDecoder;
 import dgt.eaiclient.encoder.DgtEaiClientEncoder;
 import dgt.eaiclient.handler.R4JConfigHandler;
 import dgt.eaiclient.props.DgtEaiClientProperty;
 import feign.RequestInterceptor;
 import feign.codec.Decoder;
 import feign.codec.Encoder;
+import feign.codec.ErrorDecoder;
 import io.github.resilience4j.bulkhead.BulkheadRegistry;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
@@ -79,10 +81,10 @@ public class DgtEaiClientAutoConfiguration {
     return new DgtEaiClientDecoder();
   }
 
-  // @Bean
-  // public ErrorDecoder errorDecoder(){
-  //   return new DgtEaiClientErrorDecoder();
-  // }
+  @Bean
+  public ErrorDecoder errorDecoder(){
+    return new DgtEaiClientErrorDecoder();
+  }
 
   @Bean
   @Order(10)

@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class DgtEaiClientProperty {
-
+ 
 
   /**
    * 60 seconds

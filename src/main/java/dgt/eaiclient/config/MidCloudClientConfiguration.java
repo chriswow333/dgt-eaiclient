@@ -1,5 +1,7 @@
 package dgt.eaiclient.config;
 
+import java.util.function.Function;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,4 +27,11 @@ public class MidCloudClientConfiguration {
   ){
     return new TokenInterceptor(midCloudTokenKey, midCloudToken);
   }
+
+
+    // TODO try to make it better...
+    @Bean
+    public Function<Exception,MidCloudDefaultClientFallbackFactory> factory(){
+      return MidCloudDefaultClientFallbackFactory::new;
+    }
 }

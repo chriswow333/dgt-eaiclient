@@ -1,6 +1,6 @@
 package dgt.eaiclient.type;
 
-public interface R4JType {
+public class R4JType {
     
   public static final String ROBUST = "robust";
 

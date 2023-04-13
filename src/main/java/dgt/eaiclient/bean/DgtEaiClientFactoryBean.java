@@ -21,6 +21,7 @@ import feign.RequestInterceptor;
 import feign.Target.HardCodedTarget;
 import feign.codec.Decoder;
 import feign.codec.Encoder;
+import feign.codec.ErrorDecoder;
 import feign.okhttp.OkHttpClient;
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadRegistry;
@@ -85,11 +86,16 @@ public class DgtEaiClientFactoryBean extends FeignClientFactoryBean{
     Decoder decoder = get(context, Decoder.class);
     log.info("[dgt-eaiclient][init]:feign decoder : {}", decoder.getClass().getName());
 
+    ErrorDecoder errorDecoder = get(context, ErrorDecoder.class);
+    log.info("[dgt-eaiclient][init]:feign errorDecoder : {}", errorDecoder.getClass().getName());
+
     Feign.Builder builder = Resilience4jFeign
     .builder(decorators)
     .contract(new SpringMvcContract())
     .encoder(encoder)
-    .decoder(decoder);
+    .decoder(decoder)
+    .errorDecoder(errorDecoder)
+    ;
     
 		configureFeign(context, builder);
 
@@ -139,7 +145,10 @@ public class DgtEaiClientFactoryBean extends FeignClientFactoryBean{
 
     // TODO try to make it better...
     Function fallbackFactory = getInheritedAwareOptional(context, Function.class);
-    decoratorBuilder.withFallbackFactory(fallbackFactory);
+    if(fallbackFactory != null) {
+      decoratorBuilder.withFallbackFactory(fallbackFactory);
+    }
+    
 
     
     return decoratorBuilder.build();

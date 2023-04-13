@@ -1,4 +1,4 @@
-package dgt.eaiclient.fallbackfactory;
+package dgt.eaiclient.config;
 
 
 

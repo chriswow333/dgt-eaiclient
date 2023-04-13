@@ -9,7 +9,6 @@ import org.springframework.cloud.openfeign.encoding.FeignClientEncodingPropertie
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 
-import dgt.eaiclient.fallbackfactory.InfoCloudDefaultClientFallbackFactory;
 import dgt.eaiclient.interceptor.TokenInterceptor;
 import dgt.eaiclient.props.DgtEaiClientProperty;
 
@@ -29,6 +28,7 @@ public class InfoCloudClientConfiguration {
     return new TokenInterceptor(infoCloudTokenKey, infoCloudToken);
   }
   
+  // TODO try to make it better...
   @Bean
   public Function<Exception,InfoCloudDefaultClientFallbackFactory> factory(){
     return InfoCloudDefaultClientFallbackFactory::new;

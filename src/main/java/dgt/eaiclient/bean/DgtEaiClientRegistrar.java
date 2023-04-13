@@ -49,7 +49,7 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
     LinkedHashSet<BeanDefinition> candidateComponents = new LinkedHashSet<>();
 		Map<String, Object> attrs = metadata.getAnnotationAttributes(EnableDgtClients.class.getName());
 		final Class<?>[] clients = attrs == null ? null : (Class<?>[]) attrs.get("clients");
-
+		System.out.println("dssfnijsdhfiusdfh   " + clients);
 		if (clients == null || clients.length == 0) {
       throw new DgtEaiClientException("[dgt-eaiclient][init]: No dgt clients founded");
 		}
