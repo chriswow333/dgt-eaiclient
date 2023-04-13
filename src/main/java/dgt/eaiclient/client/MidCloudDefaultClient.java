@@ -13,7 +13,7 @@ import dgt.eaiclient.type.R4JType;
 
 
 /**
- * 中台雲(升級雲) Client
+ * 中台雲(升級雲) Client - Default版
  */
 @DgtClient(
   name = "midCloudDefault",

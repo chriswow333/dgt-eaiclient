@@ -104,7 +104,7 @@ public class DgtEaiClientFactoryBean extends FeignClientFactoryBean{
   private void configureClient(FeignContext context, Feign.Builder builder){
     okhttp3.OkHttpClient client = getInheritedAwareOptional(context, okhttp3.OkHttpClient.class);
     if(client == null) {
-      throw new DgtClientInitException("Not found client bean");
+      throw new DgtClientInitException("[dgt-client][init]: Not found client bean");
     }
     builder.client(new OkHttpClient(client));
   }
@@ -112,8 +112,8 @@ public class DgtEaiClientFactoryBean extends FeignClientFactoryBean{
   private void configureInterceptors(FeignContext context, Feign.Builder builder){
     
     Map<String, RequestInterceptor> requestInterceptors = getInheritedAwareInstances(context, RequestInterceptor.class);
-    log.info("[dgt-client][init]:interceptors: {}", requestInterceptors.keySet());
     if (requestInterceptors != null) {
+      log.info("[dgt-client][init]:interceptors: {}", requestInterceptors.keySet());
 			List<RequestInterceptor> interceptors = new ArrayList<>(requestInterceptors.values());
 			AnnotationAwareOrderComparator.sort(interceptors);
 			builder.requestInterceptors(interceptors);

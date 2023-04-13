@@ -51,7 +51,7 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 		final Class<?>[] clients = attrs == null ? null : (Class<?>[]) attrs.get("clients");
 
 		if (clients == null || clients.length == 0) {
-      throw new DgtClientInitException("[dgt-eaiclient][init]: No dgt clients founded");
+      throw new DgtClientInitException("[dgt-client][init]: No dgt clients founded");
 		}
 
     for (Class<?> clazz : clients) {
@@ -107,7 +107,6 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 
 		BeanDefinitionBuilder definition = BeanDefinitionBuilder.genericBeanDefinition(clazz, () -> {
 			factoryBean.setUrl(getUrl(beanFactory, attributes));
-
 			factoryBean.setDecode404(false);
 			
 			// Object fallbackFactory = attributes.get("fallbackFactory");
@@ -132,16 +131,14 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 		BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);
 	}
 
-
   private String getClientName(Map<String, Object> client) {
-
 		if(client != null){
 			String value = (String)client.get("name");
 			if(StringUtils.hasText(value)){
 				return value;
 			}
 		}
-		throw new DgtClientInitException("'name' must be provided in @" + DgtClient.class.getSimpleName());
+		throw new DgtClientInitException("[dgt-client][init]: 'name' must be provided in @" + DgtClient.class.getSimpleName());
 	}
 
 	private String getUrl(ConfigurableBeanFactory beanFactory, Map<String, Object> attributes) {
@@ -154,11 +151,9 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 		try {
 			new URL(url);
 		}catch(MalformedURLException e){
-			throw new DgtClientInitException( url + "is malformed");
+			throw new DgtClientInitException(url + "is malformed");
 		}
-
 	}
-
 
   @Override
   public void setEnvironment(Environment environment) {

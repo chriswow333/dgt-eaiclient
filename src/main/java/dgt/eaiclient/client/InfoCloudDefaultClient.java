@@ -12,7 +12,7 @@ import dgt.eaiclient.type.R4JType;
 
 
 /**
- * 資訊雲 Client
+ * 資訊雲 Client - Default版
  */
 @DgtClient(
   name = "infoCloudDefault",
