@@ -145,6 +145,7 @@ public class DgtEaiClientFactoryBean extends FeignClientFactoryBean{
 
     // TODO try to make it better...
     Function fallbackFactory = getInheritedAwareOptional(context, Function.class);
+    log.info("[dgt-eaiclient][init-fallback]:{}", fallbackFactory);
     if(fallbackFactory != null) {
       decoratorBuilder.withFallbackFactory(fallbackFactory);
     }

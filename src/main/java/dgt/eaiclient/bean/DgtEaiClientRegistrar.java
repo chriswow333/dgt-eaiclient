@@ -17,7 +17,6 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.cloud.openfeign.FeignClientSpecification;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.env.Environment;
@@ -49,7 +48,6 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
     LinkedHashSet<BeanDefinition> candidateComponents = new LinkedHashSet<>();
 		Map<String, Object> attrs = metadata.getAnnotationAttributes(EnableDgtClients.class.getName());
 		final Class<?>[] clients = attrs == null ? null : (Class<?>[]) attrs.get("clients");
-		System.out.println("dssfnijsdhfiusdfh   " + clients);
 		if (clients == null || clients.length == 0) {
       throw new DgtEaiClientException("[dgt-eaiclient][init]: No dgt clients founded");
 		}
@@ -79,12 +77,23 @@ public class DgtEaiClientRegistrar  implements ImportBeanDefinitionRegistrar, En
 
 	private void registerClientConfiguration(BeanDefinitionRegistry registry, Object name, Object configuration) {
 
-		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(FeignClientSpecification.class);
-		builder.addConstructorArgValue(name);
-		builder.addConstructorArgValue(configuration);
+
 		
-		String beanDefinitionName = name + "." + FeignClientSpecification.class.getSimpleName();
-		registry.registerBeanDefinition(beanDefinitionName, builder.getBeanDefinition());
+		try {
+
+			Class feignClientSpecification = Class.forName("org.springframework.cloud.openfeign.FeignClientSpecification");
+			BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(feignClientSpecification);
+			builder.addConstructorArgValue(name);
+			builder.addConstructorArgValue(configuration);
+		
+			String beanDefinitionName = name + "." + feignClientSpecification.getSimpleName();
+			registry.registerBeanDefinition(beanDefinitionName, builder.getBeanDefinition());
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 
 	}
 
