@@ -132,15 +132,15 @@ public class DgtEaiClientFactoryBean extends FeignClientFactoryBean{
     FeignDecorators.Builder decoratorBuilder = FeignDecorators.builder();
 
     CircuitBreakerRegistry circuitBreakerRegistry = getInheritedAwareOptional(context, CircuitBreakerRegistry.class);
-    CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker(r4jType);
+    CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker("", r4jType);
     decoratorBuilder.withCircuitBreaker(circuitBreaker);
 
     BulkheadRegistry bulkheadRegistry = getInheritedAwareOptional(context, BulkheadRegistry.class);
-    Bulkhead bulkhead = bulkheadRegistry.bulkhead(r4jType);
+    Bulkhead bulkhead = bulkheadRegistry.bulkhead("", r4jType);
     decoratorBuilder.withBulkhead(bulkhead);
     
     RateLimiterRegistry rateLimiterRegistry = getInheritedAwareOptional(context, RateLimiterRegistry.class);
-    RateLimiter rateLimiter = rateLimiterRegistry.rateLimiter(r4jType);
+    RateLimiter rateLimiter = rateLimiterRegistry.rateLimiter("", r4jType);
     decoratorBuilder.withRateLimiter(rateLimiter);
 
     // TODO try to make it better...
